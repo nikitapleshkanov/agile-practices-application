@@ -56,7 +56,7 @@ public class GetClientsTests {
     }
 
     @Test
-    public void checkGettingClientInfo() throws IOException {
+    public void checkGettingClientsInfo() throws IOException {
         List<ClientDto> clients = service.getClients().execute().body();
         assertTrue(clients.stream()
                 .anyMatch(clientDto -> String.valueOf(clientDto.getId()).equals(String.valueOf(client.getId()))));

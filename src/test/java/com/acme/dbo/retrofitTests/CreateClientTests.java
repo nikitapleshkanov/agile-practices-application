@@ -47,7 +47,7 @@ public class CreateClientTests {
     }
 
     @Test
-    public void checkGettingClientInfo() throws IOException {
+    public void checkCreatingClient() throws IOException {
         client = service.createClient(new ClientDto()
                 .setLogin(clientLogin)
                 .setSalt(clientSalt)

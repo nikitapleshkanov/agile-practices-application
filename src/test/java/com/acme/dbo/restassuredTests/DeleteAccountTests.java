@@ -48,7 +48,7 @@ public class DeleteAccountTests {
     }
 
     @Test
-    public void checkGettingClientInfo() {
+    public void checkDeleteClientInfo() {
         givenRequest
                 .when()
                 .delete(CLIENT_ID, response.path("id").toString())
