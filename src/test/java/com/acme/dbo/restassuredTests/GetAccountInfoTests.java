@@ -1,6 +1,7 @@
 package com.acme.dbo.restassuredTests;
 
 import com.acme.dbo.ClientDto;
+import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.response.Response;
@@ -21,49 +22,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetAccountInfoTests {
 
-    private RequestSpecification givenRequest;
+    private RequestSpecification givenRequest = given()
+            .baseUri(BASE_URL)
+            .port(PORT)
+            .basePath(PATH)
+            .header("X-API-VERSION", 1)
+            .contentType("application/json")
+            .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
     private Response response;
-    private String clientLogin = "adminNewProfile3@email.com";
+    private String clientLogin = "adminNewProfile5@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
 
     @BeforeEach
     public void setUp() {
-        response = given()
-                .baseUri(BASE_URL)
-                .port(PORT)
-                .basePath(PATH)
-                .header("X-API-VERSION", 1)
-                .contentType("application/json")
-                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter())
+        response = RestAssured.given().spec(givenRequest)
                 .body(new ClientDto()
                         .setLogin(clientLogin)
                         .setSalt(clientSalt)
                         .setSecret(clientSecret))
                 .post(CLIENT);
-        givenRequest = given()
-                .baseUri(BASE_URL)
-                .port(PORT)
-                .basePath(PATH)
-                .header("X-API-VERSION", 1)
-                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
     }
 
     @AfterEach
     public void cleanUp() {
-        given()
-                .baseUri(BASE_URL)
-                .port(PORT)
-                .basePath(PATH)
-                .header("X-API-VERSION", 1)
-                .contentType("application/json")
-                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter())
+        RestAssured.given().spec(givenRequest)
                 .delete(CLIENT_ID, response.path("id").toString());
     }
 
     @Test
     public void checkGettingClientInfo() {
-        ClientDto client = givenRequest
+        ClientDto client = RestAssured.given().spec(givenRequest)
                 .when()
                 .get(CLIENT_ID, response.path("id").toString())
                 .then()

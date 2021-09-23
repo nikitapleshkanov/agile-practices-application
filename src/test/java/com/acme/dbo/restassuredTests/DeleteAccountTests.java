@@ -1,6 +1,7 @@
 package com.acme.dbo.restassuredTests;
 
 import com.acme.dbo.ClientDto;
+import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.response.Response;
@@ -19,7 +20,13 @@ import static org.hamcrest.Matchers.is;
 
 public class DeleteAccountTests {
 
-    private RequestSpecification givenRequest;
+    private RequestSpecification givenRequest = given()
+            .baseUri(BASE_URL)
+            .port(PORT)
+            .basePath(PATH)
+            .header("X-API-VERSION", 1)
+            .contentType("application/json")
+            .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
     private Response response;
     private String clientLogin = "adminNewProfile1@email.com";
     private String clientSalt = "some-salt";
@@ -27,29 +34,17 @@ public class DeleteAccountTests {
 
     @BeforeEach
     public void setUp() {
-        response = given()
-                .baseUri(BASE_URL)
-                .port(PORT)
-                .basePath(PATH)
-                .header("X-API-VERSION", 1)
-                .contentType("application/json")
-                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter())
+        response = RestAssured.given().spec(givenRequest)
                 .body(new ClientDto()
                         .setLogin(clientLogin)
                         .setSalt(clientSalt)
                         .setSecret(clientSecret))
                 .post(CLIENT);
-        givenRequest = given()
-                .baseUri(BASE_URL)
-                .port(PORT)
-                .basePath(PATH)
-                .header("X-API-VERSION", 1)
-                .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
     }
 
     @Test
     public void checkDeleteClientInfo() {
-        givenRequest
+        RestAssured.given().spec(givenRequest)
                 .when()
                 .delete(CLIENT_ID, response.path("id").toString())
                 .then()

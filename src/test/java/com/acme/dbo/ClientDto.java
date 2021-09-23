@@ -48,7 +48,7 @@ public class ClientDto {
      */
     @JsonProperty("id")
     @JsonPropertyDescription("Client id")
-    private int id;
+    private Integer id;
     /**
      * Client id
      */
@@ -104,7 +104,7 @@ public class ClientDto {
     }
 
     @JsonProperty("id")
-    public ClientDto setId(int id) {
+    public ClientDto setId(Integer id) {
         this.id = id;
         return this;
     }
@@ -129,7 +129,7 @@ public class ClientDto {
     }
 
     @JsonProperty("id")
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

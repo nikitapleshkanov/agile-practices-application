@@ -19,30 +19,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateClientTests {
-
-    ClientService service;
+;
     ClientDto client;
-    Retrofit retrofit;
+    Retrofit retrofit = new Retrofit.Builder()
+            .addConverterFactory(JacksonConverterFactory.create())
+            .baseUrl(BASE_URL + ':' + PORT + PATH)
+            .build();
+    ClientService service = retrofit.create(ClientService.class);
     private String clientLogin = "adminTest1234@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
 
-    @BeforeEach
-    public void setUp() {
-        retrofit = new Retrofit.Builder()
-                .addConverterFactory(JacksonConverterFactory.create())
-                .baseUrl(BASE_URL + ':' + PORT + PATH)
-                .build();
-        service = retrofit.create(ClientService.class);
-    }
-
     @AfterEach
     public void cleanUp() throws IOException {
-        retrofit = new Retrofit.Builder()
-                .addConverterFactory(JacksonConverterFactory.create())
-                .baseUrl(BASE_URL + ':' + PORT + PATH)
-                .build();
-        service = retrofit.create(ClientService.class);
         service.deleteClient(client.getId()).execute();
     }
 
