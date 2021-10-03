@@ -4,7 +4,6 @@ import com.acme.dbo.account.dao.AccountRepository;
 import com.acme.dbo.account.domain.Account;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -17,18 +16,23 @@ import static java.util.Collections.addAll;
 @ConditionalOnProperty(name = "features.account", havingValue = "true", matchIfMissing = true)
 @Service
 @Slf4j
-public class AccountService {
-    @Value("${spring.integration.legacyAccountingSystem.baseUrl}") String legacyAccountingSystemBaseUrl;
-    @Value("${spring.integration.legacyAccountingSystem.accountsEndpoint}") String accountEndpoint;
+public class
+AccountService {
+    @Value("${spring.integration.legacyAccountingSystem.baseUrl}")
+    String legacyAccountingSystemBaseUrl;
+    @Value("${spring.integration.legacyAccountingSystem.accountsEndpoint}")
+    String accountEndpoint;
 
-    @Autowired AccountRepository accountRepository;
-    @Autowired RestTemplate legacyAccountingSystemRestTemplate;
+    @Autowired
+    AccountRepository accountRepository;
+    @Autowired
+    RestTemplate legacyAccountingSystemRestTemplate;
 
 
     public Collection<Account> getAccounts() {
         final String legacyAccountingSystemAccountEndpoint = legacyAccountingSystemBaseUrl + accountEndpoint;
 
-        Account[] accountsFromLegacyAccountingSystem = new Account[] {};
+        Account[] accountsFromLegacyAccountingSystem = new Account[]{};
         try {
             log.debug("Requesting legacy accounting system");
             accountsFromLegacyAccountingSystem = legacyAccountingSystemRestTemplate.getForObject(legacyAccountingSystemAccountEndpoint, Account[].class);

@@ -1,16 +1,14 @@
 package com.acme.dbo;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import javax.annotation.Generated;
-import java.util.HashMap;
-import java.util.Map;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 
 /**
@@ -18,58 +16,46 @@ import java.util.Map;
  * <p>
  * Entity with personalized information about client
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "login",
-        "salt",
-        "secret"
-})
-@Generated("jsonschema2pojo")
+@Entity
+@Table(name = "CLIENT")
 public class ClientDto {
 
 
     /**
-     * Client login for auth
-     * (Required)
+     * Client id
      */
-    @JsonProperty("login")
-    @JsonPropertyDescription("Client login for auth")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Integer id;
+
+    @Column(name = "LOGIN")
     private String login;
-    /**
-     * Client salt
-     * (Required)
-     */
-    @JsonProperty("salt")
-    @JsonPropertyDescription("Client salt")
+
+    @Column(name = "SALT")
     private String salt;
 
-    /**
-     * Client id
-     */
-    @JsonProperty("id")
-    @JsonPropertyDescription("Client id")
-    private Integer id;
-    /**
-     * Client id
-     */
-    @JsonProperty("created")
-    @JsonPropertyDescription("Client created")
-    private String created;
-    /**
-     * Client enabled info
-     */
-    @JsonProperty("enabled")
-    @JsonPropertyDescription("Client enabled")
+    @Column(name = "CREATED")
+    private LocalDateTime created;
+
+    @Column(name = "ENABLED")
     private Boolean enabled;
-    /**
-     * Client secret
-     * (Required)
-     */
-    @JsonProperty("secret")
-    @JsonPropertyDescription("Client secret")
+
+    @Column(name = "SECRET")
     private String secret;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+
+    public ClientDto() {
+
+    }
+
+    public ClientDto(String login, String secret, LocalDateTime created, String salt, boolean enabled) {
+        this.login = login;
+        this.secret = secret;
+        this.salt = salt;
+        this.created = created;
+        this.enabled = enabled;
+    }
 
     /**
      * Client login for auth
@@ -98,7 +84,7 @@ public class ClientDto {
 
 
     @JsonProperty("created")
-    public ClientDto setCreated(String created) {
+    public ClientDto setCreated(LocalDateTime created) {
         this.created = created;
         return this;
     }
@@ -119,7 +105,7 @@ public class ClientDto {
     }
 
     @JsonProperty("created")
-    public String getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
@@ -160,16 +146,6 @@ public class ClientDto {
     public ClientDto setSecret(String secret) {
         this.secret = secret;
         return this;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }
