@@ -29,7 +29,6 @@ public class GetAccountInfoTests {
 
     private static EntityManagerFactory entityManagerFactory;
     private EntityManager em;
-    private ClientDto client;
     private RequestSpecification givenRequest = given()
             .baseUri(BASE_URL)
             .port(PORT)
@@ -37,30 +36,27 @@ public class GetAccountInfoTests {
             .header("X-API-VERSION", 1)
             .contentType("application/json")
             .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
-    private Response response;
     private String clientLogin = "adminNewProfile5@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
-
+    private ClientDto client = new ClientDto()
+            .setLogin(clientLogin)
+            .setSalt(clientSalt)
+            .setSecret(clientSecret)
+            .setCreated(LocalDateTime.now())
+            .setEnabled(true);
 
     @BeforeAll
-    public static void setUpDB() {
+    public void setUpDB() {
         entityManagerFactory = Persistence.createEntityManagerFactory("dbo");
+        em = entityManagerFactory.createEntityManager();
     }
 
     @BeforeEach
     public void setUp() {
-        client = new ClientDto()
-                .setLogin(clientLogin)
-                .setSalt(clientSalt)
-                .setSecret(clientSecret)
-                .setCreated(LocalDateTime.now())
-                .setEnabled(true);
-        em = entityManagerFactory.createEntityManager();
         em.getTransaction().begin();
         em.persist(client);
         em.getTransaction().commit();
-
     }
 
     @AfterEach
@@ -83,7 +79,6 @@ public class GetAccountInfoTests {
         checkGetResponse(responseClient);
     }
 
-
     private void checkGetResponse(ClientDto newClient) {
         assertEquals(clientLogin, newClient.getLogin());
         assertEquals(client.getId().toString(), String.valueOf(newClient.getId()));
@@ -93,6 +88,5 @@ public class GetAccountInfoTests {
         assertNotNull(newClient.getCreated());
         assertTrue(newClient.getEnabled());
     }
-
 
 }

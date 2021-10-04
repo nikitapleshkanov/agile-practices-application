@@ -42,7 +42,6 @@ public class DeleteAccountTests {
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
 
-
     @BeforeAll
     public static void setUpDB() throws SQLException {
         connection = DriverManager.getConnection("jdbc:derby://localhost/dbo-db");
@@ -55,7 +54,6 @@ public class DeleteAccountTests {
 
     @BeforeEach
     public void setUp() throws SQLException {
-
         try (final PreparedStatement newClient = connection.prepareStatement("INSERT INTO CLIENT(LOGIN, SECRET, SALT, CREATED, ENABLED) VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             newClient.setString(1, clientLogin);
             newClient.setString(2, clientSecret);
@@ -68,9 +66,7 @@ public class DeleteAccountTests {
                 Assertions.assertTrue(generatedKeys.next());
                 clientId = generatedKeys.getInt(1);
             }
-
         }
-
     }
 
     @Test
@@ -80,7 +76,6 @@ public class DeleteAccountTests {
                 .delete(CLIENT_ID, clientId)
                 .then()
                 .statusCode(is(SC_OK));
-
     }
 
 }

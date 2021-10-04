@@ -25,7 +25,6 @@ public class GetClientsTests {
             .baseUrl(BASE_URL + ':' + PORT + PATH)
             .build();
     ClientService service = retrofit.create(ClientService.class);
-    ;
     private String clientLogin = "adminTest123@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
@@ -49,7 +48,6 @@ public class GetClientsTests {
         List<ClientDto> clients = service.getClients().execute().body();
         assertTrue(clients.stream()
                 .anyMatch(clientDto -> String.valueOf(clientDto.getId()).equals(String.valueOf(client.getId()))));
-
     }
 
 }

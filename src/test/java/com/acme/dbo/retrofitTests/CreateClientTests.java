@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateClientTests {
-    ;
+
     ClientDto client;
     Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(JacksonConverterFactory.create())
@@ -41,7 +41,6 @@ public class CreateClientTests {
                 .setSalt(clientSalt)
                 .setSecret(clientSecret)).execute().body();
         checkClientCreation(client);
-
     }
 
     public void checkClientCreation(ClientDto client) throws IOException {
