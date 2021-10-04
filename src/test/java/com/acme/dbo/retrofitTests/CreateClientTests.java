@@ -3,7 +3,6 @@ package com.acme.dbo.retrofitTests;
 import com.acme.dbo.ClientDto;
 import com.acme.dbo.ClientService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -11,15 +10,15 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.util.List;
 
-import static com.acme.dbo.AccountEndpoints.BASE_URL;
-import static com.acme.dbo.AccountEndpoints.PATH;
-import static com.acme.dbo.AccountEndpoints.PORT;
+import static com.acme.dbo.ClientEndpoints.BASE_URL;
+import static com.acme.dbo.ClientEndpoints.PATH;
+import static com.acme.dbo.ClientEndpoints.PORT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateClientTests {
-;
+
     ClientDto client;
     Retrofit retrofit = new Retrofit.Builder()
             .addConverterFactory(JacksonConverterFactory.create())
@@ -42,7 +41,6 @@ public class CreateClientTests {
                 .setSalt(clientSalt)
                 .setSecret(clientSecret)).execute().body();
         checkClientCreation(client);
-
     }
 
     public void checkClientCreation(ClientDto client) throws IOException {

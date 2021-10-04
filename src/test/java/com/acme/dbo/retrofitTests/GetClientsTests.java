@@ -12,9 +12,9 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.util.List;
 
-import static com.acme.dbo.AccountEndpoints.BASE_URL;
-import static com.acme.dbo.AccountEndpoints.PATH;
-import static com.acme.dbo.AccountEndpoints.PORT;
+import static com.acme.dbo.ClientEndpoints.BASE_URL;
+import static com.acme.dbo.ClientEndpoints.PATH;
+import static com.acme.dbo.ClientEndpoints.PORT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetClientsTests {
@@ -24,7 +24,7 @@ public class GetClientsTests {
             .addConverterFactory(JacksonConverterFactory.create())
             .baseUrl(BASE_URL + ':' + PORT + PATH)
             .build();
-    ClientService service = retrofit.create(ClientService.class);;
+    ClientService service = retrofit.create(ClientService.class);
     private String clientLogin = "adminTest123@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
@@ -48,7 +48,6 @@ public class GetClientsTests {
         List<ClientDto> clients = service.getClients().execute().body();
         assertTrue(clients.stream()
                 .anyMatch(clientDto -> String.valueOf(clientDto.getId()).equals(String.valueOf(client.getId()))));
-
     }
 
 }

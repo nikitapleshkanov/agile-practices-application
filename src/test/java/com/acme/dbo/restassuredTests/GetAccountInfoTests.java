@@ -7,14 +7,19 @@ import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.acme.dbo.AccountEndpoints.BASE_URL;
-import static com.acme.dbo.AccountEndpoints.CLIENT;
-import static com.acme.dbo.AccountEndpoints.CLIENT_ID;
-import static com.acme.dbo.AccountEndpoints.PATH;
-import static com.acme.dbo.AccountEndpoints.PORT;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.time.LocalDateTime;
+
+import static com.acme.dbo.ClientEndpoints.BASE_URL;
+import static com.acme.dbo.ClientEndpoints.CLIENT_ID;
+import static com.acme.dbo.ClientEndpoints.PATH;
+import static com.acme.dbo.ClientEndpoints.PORT;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetAccountInfoTests {
 
+    private static EntityManagerFactory entityManagerFactory;
+    private EntityManager em;
     private RequestSpecification givenRequest = given()
             .baseUri(BASE_URL)
             .port(PORT)
@@ -29,48 +36,57 @@ public class GetAccountInfoTests {
             .header("X-API-VERSION", 1)
             .contentType("application/json")
             .filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
-    private Response response;
     private String clientLogin = "adminNewProfile5@email.com";
     private String clientSalt = "some-salt";
     private String clientSecret = "749f09bade8aca7556749f09bade8aca7556";
+    private ClientDto client = new ClientDto()
+            .setLogin(clientLogin)
+            .setSalt(clientSalt)
+            .setSecret(clientSecret)
+            .setCreated(LocalDateTime.now())
+            .setEnabled(true);
+
+    @BeforeAll
+    public void setUpDB() {
+        entityManagerFactory = Persistence.createEntityManagerFactory("dbo");
+        em = entityManagerFactory.createEntityManager();
+    }
 
     @BeforeEach
     public void setUp() {
-        response = RestAssured.given().spec(givenRequest)
-                .body(new ClientDto()
-                        .setLogin(clientLogin)
-                        .setSalt(clientSalt)
-                        .setSecret(clientSecret))
-                .post(CLIENT);
+        em.getTransaction().begin();
+        em.persist(client);
+        em.getTransaction().commit();
     }
 
     @AfterEach
     public void cleanUp() {
-        RestAssured.given().spec(givenRequest)
-                .delete(CLIENT_ID, response.path("id").toString());
+        em.getTransaction().begin();
+        final ClientDto savedClient = em.find(ClientDto.class, client.getId());
+        em.remove(savedClient);
+        em.getTransaction().commit();
+        em.close();
     }
 
     @Test
     public void checkGettingClientInfo() {
-        ClientDto client = RestAssured.given().spec(givenRequest)
+        ClientDto responseClient = RestAssured.given().spec(givenRequest)
                 .when()
-                .get(CLIENT_ID, response.path("id").toString())
+                .get(CLIENT_ID, client.getId())
                 .then()
                 .extract()
                 .body().as(ClientDto.class);
-        checkGetResponse(client);
+        checkGetResponse(responseClient);
     }
 
-
-    private void checkGetResponse(ClientDto client) {
-        assertEquals(clientLogin, client.getLogin());
-        assertEquals(response.path("id").toString(), String.valueOf(client.getId()));
-        assertEquals(clientLogin, client.getLogin());
-        assertEquals(clientSalt, client.getSalt());
-        assertEquals(clientSecret, client.getSecret());
-        assertNotNull(client.getCreated());
-        assertTrue(client.getEnabled());
+    private void checkGetResponse(ClientDto newClient) {
+        assertEquals(clientLogin, newClient.getLogin());
+        assertEquals(client.getId().toString(), String.valueOf(newClient.getId()));
+        assertEquals(clientLogin, newClient.getLogin());
+        assertEquals(clientSalt, newClient.getSalt());
+        assertEquals(clientSecret, newClient.getSecret());
+        assertNotNull(newClient.getCreated());
+        assertTrue(newClient.getEnabled());
     }
-
 
 }
